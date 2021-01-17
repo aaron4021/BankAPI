@@ -6,7 +6,7 @@ import { Message } from './common/models/message';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
+  @Get("tyr-hello-world")
   getHello(): string {
     return this.appService.getHello();
   }
