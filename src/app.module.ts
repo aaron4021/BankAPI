@@ -7,13 +7,15 @@ import { BankController } from './services/bank/bank.controller';
 
 import { Bank } from './services/bank/bank.entity';
 import { BankService } from './services/bank/bank.service';
+import { UserController } from './services/user/user.controller';
 import { User } from './services/user/user.entity';
+import { UserService } from './services/user/user.service';
 
 
 
 @Module({
   imports: [TypeOrmModule.forRoot(), TypeOrmModule.forFeature([Bank, User, Account])],
-  controllers: [AppController, BankController],
-  providers: [AppService, BankService],
+  controllers: [AppController, BankController, UserController],
+  providers: [AppService, BankService, UserService],
 })
 export class AppModule {}
