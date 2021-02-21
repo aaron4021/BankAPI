@@ -5,6 +5,7 @@ import { IdParam } from "src/common/form";
 
 import { Message } from "../../common/models/message";
 import { IDParam } from "../../common/param/param";
+import { AccountDetailInfo } from "../account/account.model";
 import { User } from "./user.entity";
 import { UserCreateForm, UserUpdateForm } from "./user.form";
 import { UserCreateData, UserUpdateData } from "./user.model";
@@ -47,6 +48,12 @@ export class UserController{
         const{id} = idParam;
         const newUser = await this.userService.update({...form, userID: +id})
         return newUser;
+    }
+    @Get("/:id/accounts")
+    async getAccs(@Param() idParam: IDParam): Promise<AccountDetailInfo[]>{
+        const {id} = idParam
+        const accallDatas = await this.userService.getuserAccs(+id);
+        return accallDatas;
     }
 
 }

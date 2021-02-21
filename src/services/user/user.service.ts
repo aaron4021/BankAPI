@@ -1,6 +1,9 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { Account } from "../account/account.entity";
+import { AccountDetailInfo } from "../account/account.model";
+import { Bank } from "../bank/bank.entity";
 import { User } from "./user.entity";
 import { UserCreateData, UserUpdateData } from "./user.model";
 
@@ -57,5 +60,20 @@ export class UserService{
 
         await this.userRepository.update({id: reqData.userID}, userData)
         return userData;
+    }
+    async getuserAccs(userID: number): Promise<AccountDetailInfo[]>{
+        const accDatas = await this.userRepository
+            .createQueryBuilder("u")
+            .select("a.balance","balance")
+            .addSelect("a.code","code")
+            .addSelect("b.bankName","bankName")
+            .addSelect("u.username","username")
+            .leftJoin(Account, "a", "u.id=a.userID")
+            .leftJoin(Bank, "b","a.bankID = b.id")
+            .where("u.id = "+userID)
+            .getRawMany()
+        return accDatas;
+            
+            
     }
 }
