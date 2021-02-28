@@ -9,6 +9,9 @@ export class UserCreateForm {
 
     @IsString()
     name: string;
+
+    @IsString()
+    role: string;
 }
 export class UserUpdateForm{
     @IsInt()

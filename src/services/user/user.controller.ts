@@ -1,6 +1,8 @@
 import { Get } from "@nestjs/common";
 import { Patch } from "@nestjs/common";
 import { Body, Controller, Delete, Param, Post } from "@nestjs/common";
+import { Auth, Authorization, getToken } from "../../common/authorization/authorization";
+
 import { IdParam } from "src/common/form";
 
 import { Message } from "../../common/models/message";
@@ -10,17 +12,26 @@ import { User } from "./user.entity";
 import { UserCreateForm, UserUpdateForm } from "./user.form";
 import { UserCreateData, UserUpdateData } from "./user.model";
 import { UserService } from "./user.service";
+import { createSecureServer } from "http2";
 
 @Controller("/user")
 export class UserController{
     constructor(private readonly userService:UserService){}
 
-    @Post()
-    async createUser(@Body() form: UserCreateForm): Promise<User>{
+    @Post("/signup")
+    async signup(@Body() form: UserCreateForm): Promise<Message>{
         const userData = await this.userService.createNewUser(form)
-        console.log(form)
-        return userData;
+        return new Message(getToken(userData.id, userData.role, userData.username))
+      
+        //return getToken(1, "Admin", "Jason");
     }
+
+    @Post()
+    // async createUser(@Body() form: UserCreateForm): Promise<User>{
+    //     const userData = await this.userService.createNewUser(form)
+    //     console.log(form)
+    //     return userData;
+    //}
 
     @Delete("/:id")
     async deleteUser (@Param() idParam: IDParam): Promise<Message>{
@@ -30,11 +41,18 @@ export class UserController{
     }
 
     @Get()
-    async getAllUser(): Promise<User[]>{
+    async getAllUser(@Authorization() auth : Auth): Promise<User[]>{
         
         const userData = await this.userService.getAllUser();
         return userData;
+
+    
         
+    }
+    @Get("/me")
+    async getmyprofile(@Authorization() auth: Auth): Promise<Auth>{
+        console.log(auth)
+        return auth;
     }
     @Get("/:id")
     async getOne(@Param()idParam:IDParam):Promise <User>{
@@ -55,5 +73,9 @@ export class UserController{
         const accallDatas = await this.userService.getuserAccs(+id);
         return accallDatas;
     }
+
+
+    
+
 
 }
