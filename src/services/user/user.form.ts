@@ -1,4 +1,4 @@
-import { IsInt, IsString } from "class-validator";
+import { IsInt, isString, IsString } from "class-validator";
 
 export class UserCreateForm {
     @IsString()
@@ -12,6 +12,9 @@ export class UserCreateForm {
 
     @IsString()
     role: string;
+
+    @IsString()
+    password: string;
 }
 export class UserUpdateForm{
     @IsInt()
@@ -24,4 +27,7 @@ export class UserUpdateForm{
 
     @IsString()
     newEmail: string
+
+    @IsString()
+    password:string
 }

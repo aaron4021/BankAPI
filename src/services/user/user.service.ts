@@ -1,11 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import * as bcrypt from "bcrypt";
 import { Account } from "../account/account.entity";
 import { AccountDetailInfo } from "../account/account.model";
 import { Bank } from "../bank/bank.entity";
 import { User } from "./user.entity";
 import { UserCreateData, UserUpdateData } from "./user.model";
+
 
 @Injectable()
 export class UserService{
@@ -17,9 +19,14 @@ export class UserService{
         if (isExist){
             throw new BadRequestException("email already existed")
         }
+
+        const hashedPassword = bcrypt.hashSync(reqData.password,12)
+        
+
         const data = {
             ...reqData
         }
+        data.password = hashedPassword;
         console.log(data);
         const savedUserData = await this.userRepository.save(data)
         return savedUserData;
@@ -32,6 +39,28 @@ export class UserService{
             return false;
         }
         return true;
+    }
+
+    async userLogin(reqData: UserCreateData): Promise<User>{
+        
+        const isExist = await this.isExist(reqData.email);
+        if (!isExist){
+            throw new BadRequestException("email does not exist");
+        }
+
+        const userData = await this.userRepository.findOne({email: reqData.email});
+
+        const password = reqData.password;
+        const userpassword = userData.password
+
+        if (!bcrypt.compareSync(password, userpassword)){
+            throw new BadRequestException('wrong password');
+        }
+
+        return userData;
+
+
+
     }
 
     async delete(userID: number){

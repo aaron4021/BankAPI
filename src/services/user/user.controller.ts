@@ -26,6 +26,19 @@ export class UserController{
         //return getToken(1, "Admin", "Jason");
     }
 
+    @Post("/login")
+    async login(@Body() form: UserCreateForm): Promise<any>{
+        const userData = await this.userService.userLogin(form)
+        const token = getToken(userData.id, userData.role, userData.username)
+        return {
+            username: userData.username,
+            role: userData.role,
+            email: userData.email,
+            token
+        }
+        
+    }
+
     @Post()
     // async createUser(@Body() form: UserCreateForm): Promise<User>{
     //     const userData = await this.userService.createNewUser(form)

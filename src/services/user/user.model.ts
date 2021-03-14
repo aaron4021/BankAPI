@@ -2,6 +2,7 @@ export class UserCreateData{
     username: string;
     name: string;
     email: string;
+    password: string;
 }
 
 export class UserUpdateData{
@@ -9,4 +10,5 @@ export class UserUpdateData{
     newName: string
     newEmail:string
     userID: number
+    password:string
 }

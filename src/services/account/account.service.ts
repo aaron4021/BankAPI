@@ -5,7 +5,7 @@ import { runInThisContext } from "vm";
 import { Bank } from "../bank/bank.entity";
 import { User } from "../user/user.entity";
 import { Account } from "./account.entity";
-import { AccountCreateData, AccountDetailInfo } from "./account.model";
+import { AccountCreateData, AccountDetailInfo, AccountTransfer, Withdraw } from "./account.model";
 
 @Injectable()
 export class AccountService{
@@ -67,5 +67,42 @@ export class AccountService{
         return detailinfo;
 
 
+    }
+    async funcTransfer(reqData: AccountTransfer): Promise<Account>{
+        console.log(reqData)
+        const accdata = await this.accountRepository.findOne({userID: reqData.userID});
+        const transaccdata = await this.accountRepository.findOne({code: reqData.code});
+        
+        const balance = accdata.balance;
+        const transfer = reqData.balance;
+        if (accdata.bankID == transaccdata.bankID){
+            const newbalance = balance - transfer;
+            accdata.balance = newbalance;
+        }
+        else{
+            const newbalance = balance- transfer - 5000;
+            accdata.balance = newbalance;
+        }
+        
+        const tnewbalance = transaccdata.balance + transfer;
+        
+        transaccdata.balance = tnewbalance;
+        await this.accountRepository.update({userID:reqData.userID}, accdata)
+        await this.accountRepository.update({code: reqData.code}, transaccdata)
+        return accdata;
+
+
+
+
+    }
+
+    async withdrawbal(reqData: Withdraw): Promise<Account>{
+        const accdata = await this.accountRepository.findOne({userID: reqData.userID});
+        const balance = accdata.balance;
+        const withdraw = reqData.balance;
+        const newbal = balance - withdraw;
+        accdata.balance = newbal;
+        await this.accountRepository.update({userID: reqData.userID}, accdata)
+        return accdata
     }
 }

@@ -11,3 +11,21 @@ export class AccountCreateForm{
     balance: number
 
 }
+
+export class TransferForm{
+
+
+    @IsInt()
+    balance: number
+
+    @IsInt()
+    code: number;
+
+    @IsInt()
+    bankID: number;
+}
+
+export class WithdrawForm{
+    @IsInt()
+    balance: number;
+}
